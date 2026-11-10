@@ -11,7 +11,7 @@ Two de-identified files from one driver of a small carrier in California, Septem
 ## De-identification
 
 Same keyed pseudonyms (HMAC-SHA256, private key) as the `telematics-data-foundation` tables, so the
-carrier and the truck join to `dim_org` / `dim_vehicle` there:
+carrier and the vehicle join to `dim_org` / `dim_vehicle` there:
 
 | Field | Published form |
 |---|---|

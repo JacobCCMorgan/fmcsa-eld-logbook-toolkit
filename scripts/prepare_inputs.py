@@ -9,7 +9,7 @@ Run once, privately, with the raw files and the de-identification key of the fou
 The raw files never enter the repository. What is published:
 
 * ``data/input/driver_output_file.csv`` - the ELD output file with every identifier replaced by a keyed
-  pseudonym (same key and namespaces as the foundation tables, so the carrier and the truck join to
+  pseudonym (same key and namespaces as the foundation tables, so the carrier and the vehicle join to
   ``dim_org`` and ``dim_vehicle``), coordinates coarsened to a 0.05 degree grid, and **all data check
   values recomputed** after the rewrite so that the published file still verifies. The unidentified
   driver profile's username is not part of the file; its event data checks are recomputed with the
