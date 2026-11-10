@@ -56,12 +56,14 @@ run through the same parser and validator:
 * In one file, 24 lines fail their line check and every one of them carries the same VIN: the VIN
   was edited after the check values were computed. The line check does its job.
 * Event checks are computed when a record is created, with the vehicle's power-unit number as
-  known then. In seven files, between 6 and 100 percent of the event checks verify only when the
-  power-unit element is empty, or with neither value: the vehicle's unit number was blank or
-  different at record time. A validator has to report such mismatches as a provenance change, not
-  as corruption, which is how `eldfile validate` labels them.
-* A raw file with 84 duplicate sequence ids and 13 failing event checks exists next to a hand
-  "modified" copy with neither: the duplicates were removed by hand before submission.
+  known then. Ten files have event checks that do not verify with the unit number the file lists.
+  In five of them every failing check verifies with an empty power-unit element: the vehicle had no
+  unit number when the records were made and was given one later. The others (1 to 39 records per
+  file) verify with neither value. A validator has to report the first kind as a provenance change,
+  not as corruption, which is how `eldfile validate` labels it.
+* A raw file with 84 sequence ids appearing twice (348 data lines) sits next to a hand "modified"
+  copy of the same days with 99 lines and no duplicates: the file was edited by hand before it was
+  submitted, and the sequence check is what makes that visible.
 
 ## Data
 
