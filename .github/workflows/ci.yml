@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests scripts
+      - run: pytest -q
+      - name: verify the published output file and rebuild the report
+        run: |
+          eldfile verify data/input/driver_output_file.csv
+          eldfile report data/input/driver_output_file.csv --export data/input/driver_events_export.csv --out /tmp/ci_reports
+      - name: the committed report matches a fresh run
+        run: diff <(grep -v '^Input:' reports/report.md) <(grep -v '^Input:' /tmp/ci_reports/report.md)
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.12'
+        with:
+          name: reports
+          path: /tmp/ci_reports
+          retention-days: 7
