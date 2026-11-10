@@ -24,6 +24,7 @@ Input: `DEID` output file for driver `drv_ce296a55a3`, carrier `ORG-d833e2b8fc`,
 | line_checks_failed | 0 |
 | file_check_ok | True |
 | driver_event_checks_failed | 0 |
+| driver_event_checks_power_unit_changed | 0 |
 | unidentified_event_checks | 83/83 verify with username 'UNIDENTIFIED' |
 | sequence_ids | 790 |
 | sequence_duplicates | 0 |
