@@ -1,0 +1,2 @@
+rule,limit_hours,start,end,excess_hours,seq
+break_30min,8.0,2026-09-04 16:31:15,2026-09-04 18:23:55,1.878,09E7

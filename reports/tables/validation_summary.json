@@ -1,0 +1,14 @@
+{
+  "data_lines": 800,
+  "line_checks_failed": 0,
+  "file_check_ok": true,
+  "driver_event_checks_failed": 0,
+  "unidentified_event_checks": "83/83 verify with username 'UNIDENTIFIED'",
+  "sequence_ids": 790,
+  "sequence_duplicates": 0,
+  "sequence_gaps": 0,
+  "sequence_min": "099F",
+  "sequence_max": "0CB4",
+  "errors": 0,
+  "warnings": 1
+}

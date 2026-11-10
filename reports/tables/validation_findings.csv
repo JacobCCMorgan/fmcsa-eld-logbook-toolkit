@@ -1,0 +1,3 @@
+level,code,section,line_no,message
+warning,section_header_text,structure,500.0,section header 'CMV Engine Power-Up and Shut Down Activity:' differs from 'CMV Engine Power-Up and Shut-Down Activity:'
+info,order,events,,1 consecutive event pairs are not in descending sequence order (edited records keep their time position but carry a newer sequence id)
