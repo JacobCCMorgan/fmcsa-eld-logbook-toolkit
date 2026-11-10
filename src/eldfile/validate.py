@@ -104,11 +104,19 @@ def validate(f: OutputFile, ud_username: str | None = None) -> Validation:
     unit = f.table("cmvs").set_index("cmv_order")["power_unit"].to_dict() if len(f.table("cmvs")) else {}
     ev = f.table("events")
     bad_ev = 0
+    unit_changed = 0
     for r in ev.itertuples():
-        exp = checks.event_check(r.event_type, r.event_code, r.date, r.time, r.accum_miles, r.elapsed_hours, r.lat, r.lon, unit.get(r.cmv_order, f.power_unit), f.username)
+        args = (r.event_type, r.event_code, r.date, r.time, r.accum_miles, r.elapsed_hours, r.lat, r.lon)
+        exp = checks.event_check(*args, unit.get(r.cmv_order, f.power_unit), f.username)
         if exp != r.event_check:
-            bad_ev += 1
-            v.add("error", "event_check", "events", r.line_no, f"event data check {r.event_check} does not match ({exp})")
+            # the check value is computed when the record is created, with the power-unit number known then;
+            # a value that verifies with an empty unit number marks a vehicle renamed after the fact, not a corrupt record
+            if checks.event_check(*args, "", f.username) == r.event_check:
+                unit_changed += 1
+                v.add("warning", "event_check_power_unit", "events", r.line_no, f"event data check {r.event_check} verifies only with an empty power-unit number: the unit number was blank or different when the record was created")
+            else:
+                bad_ev += 1
+                v.add("error", "event_check", "events", r.line_no, f"event data check {r.event_check} does not match ({exp})")
     ud = f.table("unidentified")
     ud_result = "no records"
     if len(ud):
@@ -248,7 +256,7 @@ def validate(f: OutputFile, ud_username: str | None = None) -> Validation:
     gaps = sum(b - a - 1 for a, b in zip(nums, nums[1:]) if b - a > 1)
     v.summary.update({
         "data_lines": len(f.data_lines), "line_checks_failed": len(bad_lines), "file_check_ok": f.file_check == expected_file,
-        "driver_event_checks_failed": bad_ev, "unidentified_event_checks": ud_result,
+        "driver_event_checks_failed": bad_ev, "driver_event_checks_power_unit_changed": unit_changed, "unidentified_event_checks": ud_result,
         "sequence_ids": len(all_seq), "sequence_duplicates": len(dup), "sequence_gaps": gaps, "sequence_min": f"{nums[0]:04X}" if nums else None, "sequence_max": f"{nums[-1]:04X}" if nums else None,
         "errors": v.errors, "warnings": sum(1 for x in v.findings if x.level == "warning"),
     })

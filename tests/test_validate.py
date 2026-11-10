@@ -84,3 +84,22 @@ def test_crlf_file_is_a_warning_not_an_error():
     text = PUBLISHED.read_bytes().decode("ascii").replace("\r", "\r\n")
     v = validate.validate(parse.read_text(text))
     assert "line_delimiter" in codes(v, "warning") and v.errors == 0
+
+
+def test_event_check_computed_with_an_empty_power_unit_is_a_warning():
+    # a vehicle renamed after the record was created: the stored check only verifies with an empty unit number
+    f = parse.read_file(PUBLISHED)
+    r = f.table("events").iloc[0]
+    old_check = r["event_check"]
+    new_check = checks.event_check(r.event_type, r.event_code, r.date, r.time, r.accum_miles, r.elapsed_hours, r.lat, r.lon, "", f.username)
+
+    def rewrite(s):
+        fields = s.split(",")
+        assert fields[-2] == old_check
+        fields[-2] = new_check
+        body = ",".join(fields[:-1])
+        return f"{body},{checks.line_check(body)}"
+
+    v = validate.validate(mutate(int(r["line_no"]), rewrite))
+    assert "event_check_power_unit" in codes(v, "warning") and "event_check" not in codes(v, "error")
+    assert v.summary["driver_event_checks_failed"] == 0 and v.summary["driver_event_checks_power_unit_changed"] == 1
